@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { body, param } = require('express-validator');
+const validate = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -57,7 +59,10 @@ router.get('/all', auth, async (req, res) => {
 });
 
 // GET /api/events/:id - Public: get single event
-router.get('/:id', async (req, res) => {
+router.get('/:id', [
+    param('id').isInt().withMessage('Invalid ID format'),
+    validate
+], async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM events WHERE id = ?', [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Event not found' });
@@ -68,7 +73,15 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/events - Admin: create event (JSON)
-router.post('/', auth, async (req, res) => {
+router.post('/', [
+    auth,
+    body('title').trim().notEmpty().withMessage('Title is required').escape(),
+    body('description').trim().optional().escape(),
+    body('event_date').isDate().withMessage('Valid event date is required'),
+    body('event_time').optional({ checkFalsy: true }).matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/).withMessage('Invalid time format'),
+    body('location').trim().optional().escape(),
+    validate
+], async (req, res) => {
     try {
         const { title, description, event_date, event_time, location, image_url } = req.body;
         if (!title || !event_date) {

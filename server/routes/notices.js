@@ -1,6 +1,8 @@
 const express = require('express');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { body, param } = require('express-validator');
+const validate = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -29,7 +31,10 @@ router.get('/all', auth, async (req, res) => {
 });
 
 // GET /api/notices/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', [
+    param('id').isInt().withMessage('Invalid ID format'),
+    validate
+], async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM notices WHERE id = ?', [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Notice not found' });
@@ -40,7 +45,14 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/notices - Admin (with SMS notification)
-router.post('/', auth, async (req, res) => {
+router.post('/', [
+    auth,
+    body('title').trim().notEmpty().withMessage('Title is required'),
+    body('content').trim().notEmpty().withMessage('Content is required'),
+    body('priority').optional().isIn(['low', 'medium', 'high', 'urgent']).withMessage('Invalid priority'),
+    body('expires_at').optional({ checkFalsy: true }).isDate().withMessage('Invalid expiry date'),
+    validate
+], async (req, res) => {
     try {
         const { title, content, priority, expires_at, send_sms } = req.body;
         if (!title || !content) {

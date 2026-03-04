@@ -1,6 +1,8 @@
 const express = require('express');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { body, param } = require('express-validator');
+const validate = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -25,7 +27,14 @@ router.get('/phones', auth, async (req, res) => {
 });
 
 // POST /api/parents - Admin: add parent
-router.post('/', auth, async (req, res) => {
+router.post('/', [
+    auth,
+    body('student_name').trim().notEmpty().withMessage('Student name is required').escape(),
+    body('parent_name').trim().optional().escape(),
+    body('phone').trim().notEmpty().withMessage('Phone is required').isLength({ min: 10 }).withMessage('Phone must be at least 10 digits'),
+    body('class_name').trim().optional().escape(),
+    validate
+], async (req, res) => {
     try {
         const { student_name, parent_name, phone, class_name } = req.body;
         if (!student_name || !phone) {
@@ -47,7 +56,12 @@ router.post('/', auth, async (req, res) => {
 });
 
 // PUT /api/parents/:id - Admin: update parent
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', [
+    auth,
+    param('id').isInt().withMessage('Invalid ID format'),
+    body('student_name').trim().notEmpty().withMessage('Student name is required').escape(),
+    validate
+], async (req, res) => {
     try {
         const { student_name, parent_name, phone, class_name, is_active } = req.body;
         await pool.query(

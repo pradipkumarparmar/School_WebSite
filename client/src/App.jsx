@@ -30,19 +30,19 @@ import AccessibilityToolbar from './components/AccessibilityToolbar'
 export const AuthContext = createContext()
 
 function App() {
-    const [token, setToken] = useState(localStorage.getItem('admin_token') || null)
-    const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem('admin_info') || 'null'))
+    const [token, setToken] = useState(sessionStorage.getItem('admin_token') || null)
+    const [admin, setAdmin] = useState(JSON.parse(sessionStorage.getItem('admin_info') || 'null'))
 
     const login = (newToken, adminInfo) => {
-        localStorage.setItem('admin_token', newToken)
-        localStorage.setItem('admin_info', JSON.stringify(adminInfo))
+        sessionStorage.setItem('admin_token', newToken)
+        sessionStorage.setItem('admin_info', JSON.stringify(adminInfo))
         setToken(newToken)
         setAdmin(adminInfo)
     }
 
     const logout = () => {
-        localStorage.removeItem('admin_token')
-        localStorage.removeItem('admin_info')
+        sessionStorage.removeItem('admin_token')
+        sessionStorage.removeItem('admin_info')
         setToken(null)
         setAdmin(null)
     }

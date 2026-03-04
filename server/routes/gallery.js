@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { body, param, query } = require('express-validator');
+const validate = require('../middleware/validation');
 
 const router = express.Router();
 
@@ -35,7 +37,10 @@ const upload = multer({
 });
 
 // GET /api/gallery - Public
-router.get('/', async (req, res) => {
+router.get('/', [
+    query('category').trim().optional().escape(),
+    validate
+], async (req, res) => {
     try {
         const { category } = req.query;
         let query = 'SELECT * FROM gallery';
@@ -63,7 +68,13 @@ router.get('/categories', async (req, res) => {
 });
 
 // POST /api/gallery - Admin (JSON body with image_url)
-router.post('/', auth, async (req, res) => {
+router.post('/', [
+    auth,
+    body('title').trim().notEmpty().withMessage('Title is required'),
+    body('image_url').notEmpty().withMessage('Image URL is required'),
+    body('category').trim().optional(),
+    validate
+], async (req, res) => {
     try {
         const { title, image_url, category } = req.body;
         if (!title || !image_url) {
@@ -101,7 +112,11 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
 });
 
 // DELETE /api/gallery/:id - Admin
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', [
+    auth,
+    param('id').isInt().withMessage('Invalid ID format'),
+    validate
+], async (req, res) => {
     try {
         // Get item to check if it's a local upload
         const [items] = await pool.query('SELECT * FROM gallery WHERE id = ?', [req.params.id]);

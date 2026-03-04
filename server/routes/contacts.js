@@ -1,11 +1,20 @@
 const express = require('express');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { body, param } = require('express-validator');
+const validate = require('../middleware/validation');
 
 const router = express.Router();
 
 // POST /api/contacts - Public: submit contact form
-router.post('/', async (req, res) => {
+router.post('/', [
+    body('name').trim().notEmpty().withMessage('Name is required').escape(),
+    body('email').trim().optional({ checkFalsy: true }).isEmail().withMessage('Invalid email format'),
+    body('phone').trim().optional({ checkFalsy: true }).isLength({ min: 10, max: 15 }).withMessage('Invalid phone number'),
+    body('subject').trim().notEmpty().withMessage('Subject is required').escape(),
+    body('message').trim().notEmpty().withMessage('Message is required').escape(),
+    validate
+], async (req, res) => {
     try {
         const { name, email, phone, subject, message } = req.body;
         if (!name || !subject || !message) {
@@ -32,7 +41,11 @@ router.get('/', auth, async (req, res) => {
 });
 
 // PUT /api/contacts/:id/read - Admin: mark as read
-router.put('/:id/read', auth, async (req, res) => {
+router.put('/:id/read', [
+    auth,
+    param('id').isInt().withMessage('Invalid ID format'),
+    validate
+], async (req, res) => {
     try {
         await pool.query('UPDATE contacts SET is_read = TRUE WHERE id = ?', [req.params.id]);
         res.json({ message: 'Contact marked as read' });
