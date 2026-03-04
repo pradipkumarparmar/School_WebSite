@@ -1,0 +1,29 @@
+# ધોતા પેકેન્દ્ર સ્કૂલ Website
+
+## Tasks
+- [/] Plan project architecture and implementation
+- [ ] Set up project structure (React frontend + Node.js backend)
+- [ ] Create MySQL database schema and setup scripts
+- [ ] Build backend API (Express.js + MySQL)
+  - [ ] Auth & Admin endpoints
+  - [ ] Events CRUD
+  - [ ] Notices CRUD
+  - [ ] Gallery/Info endpoints
+  - [ ] Contact form endpoint
+- [ ] Build React frontend (public pages)
+  - [ ] Homepage with hero, events, notices
+  - [ ] Events listing page
+  - [ ] Notices listing page
+  - [ ] Gallery page
+  - [ ] About page
+  - [ ] Contact page
+- [ ] Build Admin dashboard (React)
+  - [ ] Login page
+  - [ ] Dashboard overview
+  - [ ] Manage events
+  - [ ] Manage notices
+  - [ ] Manage gallery
+  - [ ] Manage contacts
+- [ ] Add responsive design and animations
+- [ ] Create documentation (README.md)
+- [ ] Verify and test the application

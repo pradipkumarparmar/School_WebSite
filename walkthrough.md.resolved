@@ -1,0 +1,70 @@
+# ધોતા પેકેન્દ્ર સ્કૂલ — Project Walkthrough
+
+## What Was Built
+
+A full-stack school website with:
+
+### Backend (`server/`)
+- **Express.js** API with 5 route modules (auth, events, notices, gallery, contacts)
+- **MySQL** database with 5 tables
+- **JWT authentication** for admin panel security
+- **Seed script** with sample Gujarati content
+
+### Frontend (`client/`)
+- **6 public pages**: Home, Events, Notices, Gallery, About, Contact
+- **6 admin pages**: Login, Dashboard, ManageEvents, ManageNotices, ManageGallery, ManageContacts
+- **3 shared components**: Navbar (responsive), Footer, AdminSidebar
+
+### Design
+- Dark theme with purple/teal gradient and glassmorphism
+- 10+ CSS animations (fadeIn, scaleIn, float, particles, bounceIn, shimmer)
+- Fully responsive (mobile hamburger menu, grid breakpoints)
+- Google Fonts: Poppins (English) + Noto Sans Gujarati
+
+---
+
+## Files Created
+
+| Category | Count | Files |
+|----------|-------|-------|
+| Backend | 9 | server.js, db.js, seed.js, schema.sql, .env, auth middleware, 4 route files |
+| Frontend | 17 | App.jsx, main.jsx, index.css, 6 pages, 5 admin pages, 3 components |
+| Docs | 1 | README.md |
+| **Total** | **27 files** | |
+
+---
+
+## How to Run
+
+### 1. Set up MySQL
+```bash
+mysql -u root -p < server/schema.sql
+```
+
+### 2. Configure & seed backend
+Edit [server/.env](file:///d:/Learning/Resume/server/.env) with your MySQL password, then:
+```bash
+cd server
+npm run seed
+npm start
+```
+
+### 3. Start frontend
+```bash
+cd client
+npm run dev
+```
+
+### 4. Open
+- Website: `http://localhost:5173`
+- Admin: `http://localhost:5173/admin/login` (admin / admin123)
+
+---
+
+## What Was Tested
+- ✅ Server dependencies installed (143 packages, 0 vulnerabilities)
+- ✅ Client dependencies installed (67 packages)
+- ✅ All files created with correct structure
+
+> [!NOTE]
+> To fully test the app, you need MySQL running with the schema loaded. Edit [server/.env](file:///d:/Learning/Resume/server/.env) with your MySQL password, run `npm run seed`, then start both server and client.

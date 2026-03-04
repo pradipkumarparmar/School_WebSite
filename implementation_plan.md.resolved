@@ -1,0 +1,151 @@
+# ધોતા પેકેન્દ્ર સ્કૂલ — School Website
+
+A full-stack school website for sharing events, notices, and information with the public, plus an admin panel for content management.
+
+**Stack**: React (Vite) + Node.js/Express + MySQL
+
+---
+
+## Proposed Changes
+
+### 1. Project Structure
+
+```
+d:\Learning\Resume\
+├── server/                    # Backend
+│   ├── package.json
+│   ├── server.js              # Express entry point
+│   ├── db.js                  # MySQL connection pool
+│   ├── middleware/
+│   │   └── auth.js            # JWT auth middleware
+│   ├── routes/
+│   │   ├── auth.js            # Login/register
+│   │   ├── events.js          # Events CRUD
+│   │   ├── notices.js         # Notices CRUD
+│   │   ├── gallery.js         # Gallery CRUD
+│   │   └── contacts.js       # Contact form
+│   └── schema.sql             # MySQL schema
+├── client/                    # React frontend (Vite)
+│   ├── package.json
+│   ├── index.html
+│   ├── src/
+│   │   ├── main.jsx
+│   │   ├── App.jsx
+│   │   ├── index.css          # Global styles + animations
+│   │   ├── pages/             # Public pages
+│   │   │   ├── Home.jsx
+│   │   │   ├── Events.jsx
+│   │   │   ├── Notices.jsx
+│   │   │   ├── Gallery.jsx
+│   │   │   ├── About.jsx
+│   │   │   └── Contact.jsx
+│   │   ├── admin/             # Admin pages
+│   │   │   ├── Login.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── ManageEvents.jsx
+│   │   │   ├── ManageNotices.jsx
+│   │   │   ├── ManageGallery.jsx
+│   │   │   └── ManageContacts.jsx
+│   │   └── components/        # Shared components
+│   │       ├── Navbar.jsx
+│   │       ├── Footer.jsx
+│   │       ├── AdminSidebar.jsx
+│   │       ├── EventCard.jsx
+│   │       ├── NoticeCard.jsx
+│   │       └── GalleryCard.jsx
+│   └── vite.config.js
+└── README.md                  # Full documentation
+```
+
+---
+
+### 2. MySQL Database Schema
+
+#### [NEW] [schema.sql](file:///d:/Learning/Resume/server/schema.sql)
+
+Tables:
+- **admins** — `id`, `username`, `email`, `password_hash`, `created_at`
+- **events** — `id`, `title`, `description`, `event_date`, `location`, `image_url`, `is_active`, `created_at`
+- **notices** — `id`, `title`, `content`, `priority` (low/medium/high/urgent), `is_active`, `published_at`, `expires_at`
+- **gallery** — `id`, `title`, `image_url`, `category`, `created_at`
+- **contacts** — `id`, `name`, `email`, `phone`, `subject`, `message`, `is_read`, `created_at`
+
+---
+
+### 3. Backend API (Express.js)
+
+#### [NEW] [server.js](file:///d:/Learning/Resume/server/server.js)
+Express app with CORS, JSON parsing, and route mounting.
+
+#### [NEW] [db.js](file:///d:/Learning/Resume/server/db.js)
+MySQL2 connection pool using environment variables.
+
+#### [NEW] [auth.js middleware](file:///d:/Learning/Resume/server/middleware/auth.js)
+JWT verification middleware for admin routes.
+
+#### Routes (all [NEW]):
+| Route File | Endpoints |
+|---|---|
+| `routes/auth.js` | `POST /api/auth/login`, `GET /api/auth/me` |
+| `routes/events.js` | `GET /api/events`, `GET /api/events/:id`, `POST`, `PUT`, `DELETE` (admin) |
+| `routes/notices.js` | `GET /api/notices`, `POST`, `PUT`, `DELETE` (admin) |
+| `routes/gallery.js` | `GET /api/gallery`, `POST`, `DELETE` (admin) |
+| `routes/contacts.js` | `POST /api/contacts` (public), `GET`, `PUT`, `DELETE` (admin) |
+
+---
+
+### 4. React Frontend
+
+#### Public Pages (all [NEW]):
+- **Home** — Animated hero banner, latest events carousel, recent notices ticker, school info
+- **Events** — Grid of event cards with filters and animations
+- **Notices** — List with priority badges, expandable content
+- **Gallery** — Masonry grid with lightbox modal
+- **About** — School history, mission, staff section
+- **Contact** — Animated contact form + school map/info
+
+#### Admin Pages (all [NEW]):
+- **Login** — JWT-based authentication
+- **Dashboard** — Stats overview (counts of events, notices, contacts)
+- **ManageEvents/Notices/Gallery/Contacts** — CRUD tables with modals
+
+#### Design Features:
+- **CSS animations**: Fade-in, slide-up, scale on hover, typewriter effect
+- **Responsive**: Mobile-first with CSS Grid/Flexbox, breakpoints at 480px/768px/1024px
+- **Theme**: Dark gradient backgrounds, glassmorphism cards, vibrant accent colors
+- **Typography**: Google Fonts (Poppins for English, Noto Sans Gujarati for Gujarati text)
+
+---
+
+### 5. Documentation
+
+#### [NEW] [README.md](file:///d:/Learning/Resume/README.md)
+Complete guide covering: prerequisites, database setup, backend setup, frontend setup, project structure, usage guide, deployment instructions (VPS, Docker, Vercel+Railway).
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> **MySQL Configuration**: You'll need a running MySQL server. The app will use environment variables for DB credentials (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`).
+
+> [!NOTE]
+> The website content will be in **Gujarati** where appropriate (headings, labels) with English for technical elements. The admin panel will primarily be in English for ease of use.
+
+---
+
+## Verification Plan
+
+### Browser Testing
+1. Start the backend: `cd d:\Learning\Resume\server && npm start`
+2. Start the frontend: `cd d:\Learning\Resume\client && npm run dev`
+3. Open `http://localhost:5173` in browser
+4. Verify: Homepage loads with animations, all pages navigate correctly, responsive at various widths
+5. Test admin login at `/admin/login`
+6. Verify CRUD operations in admin panel
+
+### Manual Verification
+- Check responsive design by resizing browser window
+- Verify animations are smooth and not janky
+- Test all API endpoints return correct data
+- Confirm MySQL tables are created correctly via `schema.sql`
